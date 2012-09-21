@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- 
+ 
+ AMG Sentry
+
+ NOTICE OF LICENSE
+
+ This source file is subject to the Open Software License (OSL 3.0)
+ that is bundled with this package in the file LICENSE.txt.
+ It is also available through the world-wide-web at this URL:
+ http://opensource.org/licenses/osl-3.0.php
+
+ @category		AMG
+ @package		AMG_Sentry
+ @copyright		Copyright © 2012 Jean Roussel <contact@jean-roussel.fr>
+ @license		http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ 
+-->
+<config>
+	<modules>
+		<AMG_Sentry>
+			<version>1.0.0</version>
+		</AMG_Sentry>
+	</modules>
+	<global>
+        <models>
+            <amg-sentry>
+                <class>AMG_Sentry_Model</class>
+            </amg-sentry>
+        </models>
+        <events>	
+            <controller_action_predispatch>
+                <observers>
+                    <amg-sentry_controller_action_predispatch>
+                        <type>singleton</type>
+                        <class>amg-sentry/observer</class>
+                        <method>initSentryLogger</method>
+                    </amg-sentry_controller_action_predispatch>
+                </observers>
+            </controller_action_predispatch>      
+        </events>
+	</global>
+	<default>
+		<dev>
+			<amg-sentry>
+				<active>false</active>
+				<dsn>http://public:secret@sentry.example.com:9000/[PROJECT_ID]</dsn>
+				<logger>magento</logger>
+			</amg-sentry>
+		</dev>
+	</default>
+</config>
