@@ -1,14 +1,19 @@
 <?php
 
 $ravenDir = Mage::getBaseDir() . DS . 'lib' . DS . 'Raven';
-require_once($ravenDir . DS . 'Client.php');
-require_once($ravenDir . DS . 'Compat.php');
-require_once($ravenDir . DS . 'ErrorHandler.php');
-require_once($ravenDir . DS . 'Stacktrace.php');
+require_once($ravenDir . DS . 'Autoloader.php');
+Raven_Autoloader::register();
+//require_once($ravenDir . DS . 'Compat.php');
+//require_once($ravenDir . DS . 'ErrorHandler.php');
+//require_once($ravenDir . DS . 'Stacktrace.php');
 
 class AMG_Sentry_Model_Client extends Raven_Client {
 
-	protected $_logger = null;
+	static protected $_logger = null;
+
+    function __construct() {
+        parent::__construct(Mage::getStoreConfig('dev/amg-sentry/dsn'));
+    }
 
 	/**
 	* Send a message to Sentry.
