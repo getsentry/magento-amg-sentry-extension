@@ -49,7 +49,22 @@ class Raven_Client
         $this->auto_log_stacks = (isset($options['auto_log_stacks']) ? $options['auto_log_stacks'] : false);
         $this->name = (!empty($options['name']) ? $options['name'] : Raven_Compat::gethostname());
         $this->site = (!empty($options['site']) ? $options['site'] : $this->_server_variable('SERVER_NAME'));
+        $this->tags = (!empty($options['tags']) ? $options['tags'] : array());
+
         $this->_lasterror = null;
+
+        $this->processors = array();
+        foreach ((isset($options['processors']) ? $options['processors'] : $this->getDefaultProcessors()) as $processor) {
+            $this->processors[] = new $processor($this);
+        }
+
+    }
+
+    public static function getDefaultProcessors()
+    {
+        return array(
+            'Raven_SanitizeDataProcessor',
+        );        
     }
 
     /**
@@ -244,9 +259,23 @@ class Raven_Client
             $data = $this->remove_invalid_utf8($data);
         }
 
+        // TODO: allow tags to be specified per event
+        $data['tags'] = $this->tags;
+
+        // sanitize data
+        $data = $this->process($data);
+
         $this->send($data);
 
         return $event_id;
+    }
+
+    public function process($data)
+    {
+        foreach ($this->processors as $processor) {
+            $data = $processor->process($data);
+        }
+        return $data;
     }
 
     public function send($data)
