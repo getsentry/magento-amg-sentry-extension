@@ -46,6 +46,8 @@
 				<active>false</active>
 				<dsn>http://public:secret@sentry.example.com:9000/[PROJECT_ID]</dsn>
 				<logger>magento</logger>
+                <php-errors>false</php-errors>
+                <php-exceptions>false</php-exceptions>
 			</amg-sentry>
 		</dev>
 	</default>
