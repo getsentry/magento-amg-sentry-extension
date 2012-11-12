@@ -12,7 +12,7 @@ This plugin is based on Raven client library [raven-php](https://github.com/gets
 
 ## Installation (via zip archive)
 
-[Download](https://github.com/amg-dev/magento-amg-sentry-extension/zipball/master) and extract zip archive.
+[Download](https://github.com/amg-dev/magento-amg-sentry-extension/archive/master.zip) and extract zip archive.
 
 Copy the content of `src` folder into your Magento project folder.
 
