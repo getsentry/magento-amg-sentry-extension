@@ -48,6 +48,7 @@
 				<logger>magento</logger>
                 <php-errors>false</php-errors>
                 <php-exceptions>false</php-exceptions>
+                <ignore-error-control-operator>true</ignore-error-control-operator>
 			</amg-sentry>
 		</dev>
 	</default>
