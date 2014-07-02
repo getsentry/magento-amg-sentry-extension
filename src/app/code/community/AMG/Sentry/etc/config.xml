@@ -43,11 +43,11 @@
 	<default>
 		<dev>
 			<amg-sentry>
-				<active>false</active>
+				<active>0</active>
 				<dsn>http://public:secret@sentry.example.com:9000/[PROJECT_ID]</dsn>
 				<logger>magento</logger>
-                <php-errors>false</php-errors>
-                <php-exceptions>false</php-exceptions>
+                		<php-errors>0</php-errors>
+                		<php-exceptions>0</php-exceptions>
 			</amg-sentry>
 		</dev>
 	</default>
