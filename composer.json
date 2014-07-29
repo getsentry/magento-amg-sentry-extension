@@ -1,0 +1,14 @@
+{
+    "name": "getsentry/magento-amg-sentry-extension",
+    "description": "Magento extension for Sentry interface.",
+    "type": "magento-module",
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "authors": [
+        {
+            "name": "Nicolas Dubois",
+            "email": "me@nicolasdubois.com"
+        }
+    ]
+}
