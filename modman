@@ -1,0 +1,3 @@
+src/app/code/community/AMG/Sentry	app/code/community/AMG/Sentry
+src/app/etc/modules/AMG_Sentry.xml	app/etc/modules/AMG_Sentry.xml
+src/lib/Raven				lib/Raven
