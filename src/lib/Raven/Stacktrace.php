@@ -1,21 +1,25 @@
 <?php
 /**
- * Small helper class to inspect the stacktrace
+ * This file is part of Raven.
  *
- * @package raven
+ * (c) Sentry Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code (BSD-3-Clause).
  */
+
 class Raven_Stacktrace
 {
     public static function get_stack_info($stack)
     {
-        $result = array();
+        $result = [];
         foreach($stack as $frame) {
             if (!isset($frame['file'])) {
                 if (isset($frame['args'])) {
                     $args = is_string($frame['args']) ? $frame['args'] : @json_encode($frame['args']);
                 }
                 else {
-                    $args = array();
+                    $args = [];
                 }
                 if (isset($frame['class'])) {
                     $context['line'] = sprintf('%s%s%s(%s)',
@@ -42,31 +46,31 @@ class Raven_Stacktrace
                 $module .= ':' . $frame['class'];
             }
 
-            array_push($result, array(
+            array_push($result, [
                 'abs_path' => $abs_path,
                 'filename' => $context['filename'],
                 'lineno' => $context['lineno'],
                 'module' => $module,
                 'function' => $frame['function'],
-                'vars' => array(),
+                'vars' => [],
                 'pre_context' => $context['prefix'],
                 'context_line' => $context['line'],
                 'post_context' => $context['suffix'],
 
-            ));
+            ]);
         }
         return array_reverse($result);
     }
 
     private static function read_source_file($filename, $lineno)
     {
-        $frame = array(
-            'prefix' => array(),
+        $frame = [
+            'prefix' => [],
             'line' => '',
-            'suffix' => array(),
+            'suffix' => [],
             'filename' => $filename,
             'lineno' => $lineno,
-        );
+        ];
 
         if ($filename === null || $lineno === null) {
             return $frame;
@@ -74,7 +78,7 @@ class Raven_Stacktrace
 
         // Code which is eval'ed have a modified filename.. Extract the
         // correct filename + linenumber from the string.
-        $matches = array();
+        $matches = [];
         $matched = preg_match("/^(.*?)\((\d+)\) : eval\(\)'d code$/",
             $filename, $matches);
         if ($matched) {

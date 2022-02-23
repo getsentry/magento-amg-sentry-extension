@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
-<!-- 
- 
+<!--
+
  AMG Sentry
 
  NOTICE OF LICENSE
@@ -10,11 +10,11 @@
  It is also available through the world-wide-web at this URL:
  http://opensource.org/licenses/osl-3.0.php
 
- @category		AMG
- @package		AMG_Sentry
- @copyright		Copyright © 2012 Jean Roussel <contact@jean-roussel.fr>
- @license		http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- 
+ @category      AMG
+ @package       AMG_Sentry
+ @copyright     Copyright © 2012 Jean Roussel <contact@jean-roussel.fr>
+ @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+
 -->
 <config>
 	<modules>

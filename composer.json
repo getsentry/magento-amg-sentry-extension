@@ -1,14 +1,25 @@
 {
+    "type": "magento-module",
     "name": "getsentry/magento-amg-sentry-extension",
     "description": "Magento extension for Sentry interface.",
-    "type": "magento-module",
-    "require": {
-        "magento-hackathon/magento-composer-installer": "*"
-    },
+    "keywords": ["openmage", "openmage-module"],
+    "homepage": "https://github.com/getsentry/magento-amg-sentry-extension",
+    "license": "OSL-3.0",
     "authors": [
         {
             "name": "Nicolas Dubois",
             "email": "me@nicolasdubois.com"
         }
-    ]
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "map": [
+            ["src/app/etc/modules/AMG_Sentry.xml", "app/etc/modules/AMG_Sentry.xml"],
+            ["src/app/code/community/AMG/Sentry/", "app/code/community/AMG/Sentry/"],
+            ["src/lib/Raven/", "lib/Raven/"]
+        ]
+    }
 }

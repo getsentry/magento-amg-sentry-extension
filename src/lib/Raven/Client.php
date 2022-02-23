@@ -1,18 +1,11 @@
 <?php
-
-/*
+/**
  * This file is part of Raven.
  *
  * (c) Sentry Team
  *
  * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-/**
- * Raven PHP Client
- *
- * @package raven
+ * file that was distributed with this source code (BSD-3-Clause).
  */
 
 class Raven_Client
@@ -26,7 +19,7 @@ class Raven_Client
     const ERROR = 'error';
     const FATAL = 'fatal';
 
-    function __construct($options_or_dsn=null, $options=array())
+    public function __construct($options_or_dsn=null, $options=[])
     {
         if (is_null($options_or_dsn) && !empty($_SERVER['SENTRY_DSN'])) {
             // Read from environment
@@ -37,7 +30,7 @@ class Raven_Client
                 // Must be a valid DSN
                 $options_or_dsn = self::parseDSN($options_or_dsn);
             } else {
-                $options_or_dsn = array();
+                $options_or_dsn = [];
             }
         }
         $options = array_merge($options_or_dsn, $options);
@@ -49,11 +42,11 @@ class Raven_Client
         $this->auto_log_stacks = (isset($options['auto_log_stacks']) ? $options['auto_log_stacks'] : false);
         $this->name = (!empty($options['name']) ? $options['name'] : Raven_Compat::gethostname());
         $this->site = (!empty($options['site']) ? $options['site'] : $this->_server_variable('SERVER_NAME'));
-        $this->tags = (!empty($options['tags']) ? $options['tags'] : array());
+        $this->tags = (!empty($options['tags']) ? $options['tags'] : []);
 
         $this->_lasterror = null;
 
-        $this->processors = array();
+        $this->processors = [];
         foreach ((isset($options['processors']) ? $options['processors'] : $this->getDefaultProcessors()) as $processor) {
             $this->processors[] = new $processor($this);
         }
@@ -62,9 +55,9 @@ class Raven_Client
 
     public static function getDefaultProcessors()
     {
-        return array(
+        return [
             'Raven_SanitizeDataProcessor',
-        );        
+        ];
     }
 
     /**
@@ -74,7 +67,7 @@ class Raven_Client
     {
         $url = parse_url($dsn);
         $scheme = (isset($url['scheme']) ? $url['scheme'] : '');
-        if (!in_array($scheme, array('http', 'https', 'udp'))) {
+        if (!in_array($scheme, ['http', 'https', 'udp'])) {
             throw new InvalidArgumentException('Unsupported Sentry DSN scheme: ' . $scheme);
         }
         $netloc = (isset($url['host']) ? $url['host'] : null);
@@ -97,15 +90,15 @@ class Raven_Client
         }
         $username = (isset($url['user']) ? $url['user'] : null);
         $password = (isset($url['pass']) ? $url['pass'] : null);
-        if (empty($netloc) || empty($project) || empty($username) || empty($password)) {
+        if (empty($netloc) || empty($project) || empty($username)) {
             throw new InvalidArgumentException('Invalid Sentry DSN: ' . $dsn);
         }
-        return array(
-            'servers'    => array(sprintf('%s://%s%s/api/store/', $scheme, $netloc, $path)),
+        return [
+            'servers'    => [sprintf('%s://%s%s/api/store/', $scheme, $netloc, $path)],
             'project'    => $project,
             'public_key' => $username,
             'secret_key' => $password,
-        );
+        ];
     }
 
     /**
@@ -118,27 +111,9 @@ class Raven_Client
     }
 
     /**
-     * Deprecated
-     */
-    public function message($message, $params=array(), $level=self::INFO,
-                            $stack=false)
-    {
-        return $this->captureMessage($message, $params, $level, $stack);
-    }
-
-    /**
-     * Deprecated
-     */
-    public function exception($exception)
-    {
-        return $this->captureException($exception);
-    }
-
-    /**
      * Log a message to sentry
      */
-    public function captureMessage($message, $params=array(), $level=self::INFO,
-                            $stack=false)
+    public function captureMessage($message, $params=[], $level=self::INFO, $stack=false)
     {
         // Gracefully handle messages which contain formatting characters, but were not
         // intended to be used with formatting.
@@ -148,14 +123,14 @@ class Raven_Client
             $formatted_message = $message;
         }
 
-        $data = array(
+        $data = [
             'message' => $formatted_message,
             'level' => $level,
-            'sentry.interfaces.Message' => array(
+            'sentry.interfaces.Message' => [
                 'message' => $message,
                 'params' => $params,
-            )
-        );
+            ]
+        ];
         return $this->capture($data, $stack);
     }
 
@@ -169,15 +144,15 @@ class Raven_Client
             $exc_message = '<unknown exception>';
         }
 
-        $data = array(
+        $data = [
             'message' => $exc_message
-        );
+        ];
 
-        $data['sentry.interfaces.Exception'] = array(
+        $data['sentry.interfaces.Exception'] = [
                 'value' => $exc_message,
                 'type' => $exception->getCode(),
                 'module' => $exception->getFile() .':'. $exception->getLine(),
-        );
+        ];
 
         if ($culprit){
             $data["culprit"] = $culprit;
@@ -192,10 +167,10 @@ class Raven_Client
          * was thrown, so we have to stuff it in ourselves. Ugh.
          */
         $trace = $exception->getTrace();
-        $frame_where_exception_thrown = array(
+        $frame_where_exception_thrown = [
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
-        );
+        ];
         array_unshift($trace, $frame_where_exception_thrown);
         return $this->capture($data, $trace);
     }
@@ -209,17 +184,17 @@ class Raven_Client
 
         // The function getallheaders() is only available when running in a
         // web-request. The function is missing when run from the commandline..
-        $headers = array();
+        $headers = [];
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
         }
 
-        $data = array_merge($data, array(
+        $data = array_merge($data, [
             'server_name' => $this->name,
             'event_id' => $event_id,
             'project' => $this->project,
             'site' => $this->site,
-            'sentry.interfaces.Http' => array(
+            'sentry.interfaces.Http' => [
                 'method' => $this->_server_variable('REQUEST_METHOD'),
                 'url' => $this->get_current_url(),
                 'query_string' => $this->_server_variable('QUERY_STRNG'),
@@ -227,8 +202,8 @@ class Raven_Client
                 'cookies' => $_COOKIE,
                 'headers' => $headers,
                 'env' => $_SERVER,
-            )
-        ));
+            ]
+        ]);
 
         if ((!$stack && $this->auto_log_stacks) || $stack === True) {
             $stack = debug_backtrace();
@@ -249,9 +224,9 @@ class Raven_Client
             $stack[count($stack) - 1]['function'] = null;
 
             if (!isset($data['sentry.interfaces.Stacktrace'])) {
-                $data['sentry.interfaces.Stacktrace'] = array(
+                $data['sentry.interfaces.Stacktrace'] = [
                     'frames' => Raven_Stacktrace::get_stack_info($stack)
-                );
+                ];
             }
         }
 
@@ -288,18 +263,18 @@ class Raven_Client
             $signature = $this->get_signature(
                 $message, $timestamp, $this->secret_key);
 
-            $headers = array(
+            $headers = [
                 'User-Agent' => $client_string,
                 'X-Sentry-Auth' => $this->get_auth_header(
                     $signature, $timestamp, $client_string, $this->public_key),
                 'Content-Type' => 'application/octet-stream'
-            );
+            ];
 
             $this->send_remote($url, $message, $headers);
         }
     }
 
-    private function send_remote($url, $data, $headers=array())
+    private function send_remote($url, $data, $headers=[])
     {
         $parts = parse_url($url);
         $parts['netloc'] = $parts['host'].(isset($parts['port']) ? ':'.$parts['port'] : null);
@@ -325,9 +300,9 @@ class Raven_Client
     /**
      * Send the message over http to the sentry url given
      */
-    private function send_http($url, $data, $headers=array())
+    private function send_http($url, $data, $headers=[])
     {
-        $new_headers = array();
+        $new_headers = [];
         foreach($headers as $key => $value) {
             array_push($new_headers, $key .': '. $value);
         }
@@ -358,15 +333,14 @@ class Raven_Client
         return Raven_Compat::hash_hmac('sha1', sprintf('%F', $timestamp) .' '. $message, $key);
     }
 
-    private function get_auth_header($signature, $timestamp, $client,
-                                     $api_key=null)
+    private function get_auth_header($signature, $timestamp, $client, $api_key=null)
     {
-        $header = array(
+        $header = [
             sprintf("sentry_timestamp=%F", $timestamp),
             "sentry_signature={$signature}",
             "sentry_client={$client}",
             "sentry_version=2.0",
-        );
+        ];
 
         if ($api_key) {
             array_push($header, "sentry_key={$api_key}");
@@ -443,4 +417,8 @@ class Raven_Client
         return $data;
     }
 
+    public function getLastError()
+    {
+        return $this->_lasterror;
+    }
 }

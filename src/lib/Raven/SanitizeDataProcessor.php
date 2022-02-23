@@ -1,17 +1,22 @@
 <?php
 /**
- * Asterisk out passwords from password fields in frames, http,
- * and basic extra data.
+ * This file is part of Raven.
  *
- * @package raven
+ * (c) Sentry Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code (BSD-3-Clause).
  */
+
 class Raven_SanitizeDataProcessor extends Raven_Processor
 {
+    // Asterisk out passwords from password fields in frames, http, and basic extra data.
     const MASK = '********';
     const FIELDS_RE = '/(authorization|password|passwd|secret)/i';
     const VALUES_RE = '/^\d{16}$/';
 
-    function apply($value, $fn, $key=null) {
+    public function apply($value, $fn, $key=null)
+    {
         if (is_array($value)) {
             foreach ($value as $k=>$v) {
                 $value[$k] = $this->apply($v, $fn, $k);
@@ -21,7 +26,7 @@ class Raven_SanitizeDataProcessor extends Raven_Processor
         return call_user_func($fn, $key, $value);
     }
 
-    function sanitize($key, $value)
+    public function sanitize($key, $value)
     {
         if (empty($value)) {
             return $value;
@@ -38,7 +43,8 @@ class Raven_SanitizeDataProcessor extends Raven_Processor
         return $value;
     }
 
-    function process($data) {
-        return $this->apply($data, array($this, 'sanitize'));
+    public function process($data)
+    {
+        return $this->apply($data, [$this, 'sanitize']);
     }
 }

@@ -1,19 +1,13 @@
 <?php
-
-/*
+/**
  * This file is part of Raven.
  *
  * (c) Sentry Team
  *
  * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * file that was distributed with this source code (BSD-3-Clause).
  */
 
-/**
- * Autoloads Raven classes.
- *
- * @package raven
- */
 class Raven_Autoloader
 {
     /**
@@ -22,7 +16,7 @@ class Raven_Autoloader
     static public function register()
     {
         ini_set('unserialize_callback_func', 'spl_autoload_call');
-        spl_autoload_register(array(new self, 'autoload'));
+        spl_autoload_register([new self, 'autoload']);
     }
 
     /**
@@ -38,7 +32,7 @@ class Raven_Autoloader
             return;
         }
 
-        if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
+        if (is_file($file = dirname(__FILE__).'/../'.str_replace(['_', "\0"], ['/', ''], $class).'.php')) {
             require $file;
         }
     }

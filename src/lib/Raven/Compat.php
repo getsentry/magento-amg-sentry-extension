@@ -1,17 +1,15 @@
 <?php
-
-/*
+/**
  * This file is part of Raven.
  *
  * (c) Sentry Team
  *
  * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * file that was distributed with this source code (BSD-3-Clause).
  */
- 
+
 class Raven_Compat
 {
-
     public static function gethostname()
     {
         if (function_exists('gethostname')) {
@@ -73,15 +71,15 @@ class Raven_Compat
         return self::_json_encode($value);
     }
 
-    /** 
+    /**
      * Implementation taken from
      * http://www.mike-griffiths.co.uk/php-json_encode-alternative/
      */
     public static function _json_encode($value)
     {
-        static $jsonReplaces = array(
-            array('\\', '/', "\n", "\t", "\r", "\b", "\f", '"'), 
-            array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"'));
+        static $jsonReplaces = [
+            ['\\', '/', "\n", "\t", "\r", "\b", "\f", '"'],
+            ['\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"']];
 
         if (is_null($value)) {
             return 'null';
@@ -94,13 +92,13 @@ class Raven_Compat
         }
 
         if (is_scalar($value)) {
-            
+
             // Always use '.' for floats.
             if (is_float($value)) {
                 return floatval(str_replace(',', '.', strval($value)));
             }
             if (is_string($value)) {
-                return sprintf('"%s"', 
+                return sprintf('"%s"',
                     str_replace($jsonReplaces[0], $jsonReplaces[1], $value));
             }
             else {
@@ -109,19 +107,19 @@ class Raven_Compat
         }
 
         $isList = true;
-        for ($i = 0, reset($value); true; $i++) { 
+        for ($i = 0, reset($value); true; $i++) {
             if (key($value) !== $i) {
                 $isList = false;
                 break;
             }
         }
-        $result = array();
+        $result = [];
         if ($isList) {
             foreach ($value as $v) {
                 $result[] = self::_json_encode($v);
             }
             return '[' . join(',', $result) . ']';
-        } 
+        }
         else {
             foreach ($value as $k => $v) {
                 $result[] = self::_json_encode($k) . ':' . self::_json_encode($v);
@@ -130,4 +128,3 @@ class Raven_Compat
         }
     }
 }
-
